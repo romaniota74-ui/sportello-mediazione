@@ -462,33 +462,7 @@ function caricaDati(d){
   for(let i=1;i<=8;i++)['data','tipo','ente','esito'].forEach(col=>{const el=document.getElementById(`int_${i}_${col}`);if(el&&d[`int_${i}_${col}`]!==undefined)el.value=d[`int_${i}_${col}`];});
 }
 async function salvaScheda(){
-  mostraStatus('Salvataggio in corso...','loading');
-  const dati=raccogliDati();
-  if(!currentId){
-    currentId=Date.now().toString();
-    dati._id=currentId;
-  }
-  try{
-    const resp=await fetch(SCRIPT_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify(dati)
-    });
-    if(resp.ok){
-      document.getElementById('scheda-id-label').textContent=`ID: ${currentId}`;
-      mostraStatus('✓ Scheda salvata correttamente','ok');
-      // Save locally too
-      const saved=JSON.parse(localStorage.getItem('schede')||'[]');
-      const idx=saved.findIndex(s=>s._id===currentId);
-      if(idx>=0)saved[idx]=dati; else saved.push(dati);
-      localStorage.setItem('schede',JSON.stringify(saved));
-      tutteLeSchede=saved;
-      renderArchivio(tutteLeSchede);
-    } else {
-      mostraStatus('✗ Errore nel salvataggio','err');
-    }
-  }catch(e){mostraStatus('✗ Errore: '+e.message,'err');}
-}
+
 function nuovaScheda(){
   if(!confirm('Vuoi iniziare una nuova scheda? I dati non salvati andranno persi.'))return;
   currentId=null;
