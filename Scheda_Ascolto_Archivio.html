@@ -344,7 +344,7 @@ textarea{resize:vertical;}
 </div>
 
 <script>
-const SCRIPT_URL="https://script.google.com/macros/s/AKfycbwl6TeF35V0-7dTavprnoUofPY68A-L5gF0mFLlBn-kqKfxpCl5nh-hTo71S9Avnq8/exec";
+const SCRIPT_URL="https://formspree.io/f/mqervdzw";
 let currentId=null,tutteLeSchede=[];
 function raccogliDati(){
   const d={};
@@ -370,23 +370,30 @@ function caricaDati(d){
 async function salvaScheda(){
   mostraStatus('Salvataggio in corso...','loading');
   const dati=raccogliDati();
-  // Generate local ID if new
   if(!currentId){
     currentId=Date.now().toString();
     dati._id=currentId;
   }
   try{
-    // Use no-cors to avoid CORS block - response will be opaque
-    await fetch(SCRIPT_URL,{
+    const resp=await fetch(SCRIPT_URL,{
       method:'POST',
-      mode:'no-cors',
-      body:JSON.stringify(dati),
-      headers:{'Content-Type':'application/json'}
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify(dati)
     });
-    document.getElementById('scheda-id-label').textContent=`ID: ${currentId}`;
-    mostraStatus('✓ Scheda salvata correttamente','ok');
-    setTimeout(()=>caricaArchivio(),2000);
-  }catch(e){mostraStatus('✗ Errore nel salvataggio: '+e.message,'err');}
+    if(resp.ok){
+      document.getElementById('scheda-id-label').textContent=`ID: ${currentId}`;
+      mostraStatus('✓ Scheda salvata correttamente','ok');
+      // Save locally too
+      const saved=JSON.parse(localStorage.getItem('schede')||'[]');
+      const idx=saved.findIndex(s=>s._id===currentId);
+      if(idx>=0)saved[idx]=dati; else saved.push(dati);
+      localStorage.setItem('schede',JSON.stringify(saved));
+      tutteLeSchede=saved;
+      renderArchivio(tutteLeSchede);
+    } else {
+      mostraStatus('✗ Errore nel salvataggio','err');
+    }
+  }catch(e){mostraStatus('✗ Errore: '+e.message,'err');}
 }
 function nuovaScheda(){
   if(!confirm('Vuoi iniziare una nuova scheda? I dati non salvati andranno persi.'))return;
@@ -397,14 +404,10 @@ function nuovaScheda(){
   document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
   mostraStatus('Nuova scheda pronta','ok');
 }
-async function caricaArchivio(){
-  try{
-    const resp=await fetch(SCRIPT_URL);
-    tutteLeSchede=await resp.json();
-    renderArchivio(tutteLeSchede);
-  }catch(e){
-    document.getElementById('schede-list').innerHTML='<div style="color:#aaa;font-size:12px;text-align:center;padding:16px">Errore caricamento archivio</div>';
-  }
+function caricaArchivio(){
+  const saved=JSON.parse(localStorage.getItem('schede')||'[]');
+  tutteLeSchede=saved;
+  renderArchivio(saved);
 }
 function renderArchivio(schede){
   const list=document.getElementById('schede-list');
