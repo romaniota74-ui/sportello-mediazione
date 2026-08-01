@@ -461,53 +461,6 @@ function caricaDati(d){
   document.querySelectorAll('input[name="area"]').forEach(el=>{el.checked=d.area&&d.area.includes(el.value);});
   for(let i=1;i<=8;i++)['data','tipo','ente','esito'].forEach(col=>{const el=document.getElementById(`int_${i}_${col}`);if(el&&d[`int_${i}_${col}`]!==undefined)el.value=d[`int_${i}_${col}`];});
 }
-async function salvaScheda(){
-
-function nuovaScheda(){
-  if(!confirm('Vuoi iniziare una nuova scheda? I dati non salvati andranno persi.'))return;
-  currentId=null;
-  document.getElementById('scheda-id-label').textContent='';
-  document.querySelectorAll('input[type="text"],input[type="date"],textarea').forEach(el=>el.value='');
-  document.querySelectorAll('input[type="checkbox"]').forEach(el=>el.checked=false);
-  document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
-  mostraStatus('Nuova scheda pronta','ok');
-}
-function caricaArchivio(){
-  const saved=JSON.parse(localStorage.getItem('schede')||'[]');
-  tutteLeSchede=saved;
-  renderArchivio(saved);
-}
-function renderArchivio(schede){
-  const list=document.getElementById('schede-list');
-  if(!schede.length){list.innerHTML='<div style="color:#aaa;font-size:12px;text-align:center;padding:16px">Nessuna scheda salvata.</div>';return;}
-  list.innerHTML=schede.slice().reverse().map(s=>{
-    const nome=[s.cognome,s.nome].filter(Boolean).join(' ')||'(senza nome)';
-    const data=s.data_colloquio||'';
-    const op=s.operatore||'';
-    return `<div class="scheda-item"><div><div class="si-nome">${nome}</div><div class="si-meta">${data}${op?' · '+op:''}</div></div><button class="btn-mini btn-apri" onclick="apriScheda('${s._id}')">Apri</button></div>`;
-  }).join('');
-}
-function filtraSchede(){
-  const q=document.getElementById('search-box').value.toLowerCase();
-  renderArchivio(tutteLeSchede.filter(s=>(s.cognome||'').toLowerCase().includes(q)||(s.nome||'').toLowerCase().includes(q)||(s.operatore||'').toLowerCase().includes(q)||(s.data_colloquio||'').includes(q)));
-}
-function apriScheda(id){
-  const s=tutteLeSchede.find(x=>x._id==id);
-  if(!s)return;
-  currentId=id;
-  caricaDati(s);
-  document.getElementById('scheda-id-label').textContent=`ID: ${id}`;
-  mostraStatus(`Scheda di ${s.cognome||''} ${s.nome||''} caricata`,'ok');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-function mostraStatus(msg,tipo){
-  const bar=document.getElementById('status-bar');
-  bar.textContent=msg;
-  bar.className=tipo==='ok'?'status-ok':tipo==='err'?'status-err':'status-loading';
-  bar.style.display='block';
-  if(tipo!=='loading')setTimeout(()=>bar.style.display='none',4000);
-}
-caricaArchivio();
 </script>
 </body>
 </html>
