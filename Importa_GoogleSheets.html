@@ -79,7 +79,7 @@ async function avviaImportazione() {
       err++;
       console.log('Errore rete:', e.message);
     }
-    await new Promise(res => setTimeout(res, 150));
+    await new Promise(res => setTimeout(res, 500));
   }
 
   bar.style.width = '100%';
