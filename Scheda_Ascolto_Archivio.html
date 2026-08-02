@@ -428,7 +428,6 @@ async function salvaScheda(){
       document.getElementById('scheda-id-label').textContent=`ID: ${currentId}`;
       mostraStatus('✓ Scheda salvata correttamente','ok');
       
-function calcolaTotaleMinori(){const a=parseInt(document.getElementById("minori_0_5").value)||0;const b=parseInt(document.getElementById("minori_6_11").value)||0;const c=parseInt(document.getElementById("minori_12_17").value)||0;document.getElementById("n_minori").value=a+b+c||"";}
 caricaArchivio();
     }else{
       mostraStatus('✗ Errore: '+JSON.stringify(result),'err');
@@ -492,6 +491,12 @@ function mostraStatus(msg,tipo){
   if(tipo!=='loading')setTimeout(()=>bar.style.display='none',4000);
 }
 
+function calcolaTotaleMinori(){
+  const a=parseInt(document.getElementById("minori_0_5").value)||0;
+  const b=parseInt(document.getElementById("minori_6_11").value)||0;
+  const c=parseInt(document.getElementById("minori_12_17").value)||0;
+  document.getElementById("n_minori").value=a+b+c||"";
+}
 caricaArchivio();
 </script>
 </body>
