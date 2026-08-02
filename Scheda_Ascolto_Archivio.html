@@ -148,7 +148,13 @@ textarea{resize:vertical;}
           </div>
         </div>
         <div class="field"><label>N°</label><input type="text" id="n_minori" style="width:60px"></div>
-        <div class="field grow"><label>Età minori</label><input type="text" id="eta_minori"></div>
+        <div class="field grow"><label>Fasce d'età</label>
+          <div class="check-group" style="margin:0">
+            <label class="check-item"><input type="checkbox" name="fascia_eta" value="0-5"> 0-5 anni</label>
+            <label class="check-item"><input type="checkbox" name="fascia_eta" value="6-11"> 6-11 anni</label>
+            <label class="check-item"><input type="checkbox" name="fascia_eta" value="12-17"> 12-17 anni</label>
+          </div>
+        </div>
       </div>
     </div>
     <div class="section">
@@ -165,6 +171,23 @@ textarea{resize:vertical;}
       <div class="row">
         <div class="field"><label>Anno arrivo in Italia</label><input type="text" id="anno_arrivo" style="width:80px"></div>
         <div class="field grow"><label>Comune / Regione primo arrivo</label><input type="text" id="comune_arrivo"></div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">2b. Situazione lavorativa</div>
+      <div style="margin-bottom:8px">
+        <label style="font-size:11px;color:var(--gray);font-weight:600">Tipologia di lavoro (anche più voci):</label>
+        <div class="check-group" style="margin-top:4px">
+          <label class="check-item"><input type="checkbox" name="lavoro" value="Agricoltura"> Agricoltura</label>
+          <label class="check-item"><input type="checkbox" name="lavoro" value="Edilizia"> Edilizia</label>
+          <label class="check-item"><input type="checkbox" name="lavoro" value="Ristorazione / Turismo"> Ristorazione / Turismo</label>
+          <label class="check-item"><input type="checkbox" name="lavoro" value="Lavoro domestico / Colf"> Lavoro domestico / Colf</label>
+          <label class="check-item"><input type="checkbox" name="lavoro" value="Operaio in fabbrica"> Operaio in fabbrica</label>
+          <label class="check-item"><input type="checkbox" name="lavoro" value="Operatore accoglienza"> Operatore accoglienza</label>
+          <label class="check-item"><input type="checkbox" name="lavoro" value="Altro settore"> Altro settore</label>
+          <label class="check-item"><input type="checkbox" name="lavoro" value="Disoccupato"> Disoccupato</label>
+          <label class="check-item"><input type="checkbox" name="lavoro" value="In cerca di prima occupazione"> In cerca di prima occupazione</label>
+        </div>
       </div>
     </div>
     <div class="section">
@@ -352,6 +375,8 @@ function raccogliDati(){
   ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'].forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);d[name]=el?el.value:'';});
   d.stp_presente=document.getElementById('stp_presente')?.checked?'Sì':'';
   d.stp_aggiornato=document.getElementById('stp_aggiornato')?.checked?'Sì':'';
+  d.lavoro=Array.from(document.querySelectorAll('input[name="lavoro"]:checked')).map(el=>el.value).join(', ');
+  d.fascia_eta=Array.from(document.querySelectorAll('input[name="fascia_eta"]:checked')).map(el=>el.value).join(', ');
   d.permesso=Array.from(document.querySelectorAll('input[name="permesso"]:checked')).map(el=>el.value).join(', ');
   d.area=Array.from(document.querySelectorAll('input[name="area"]:checked')).map(el=>el.value).join(', ');
   for(let i=1;i<=8;i++)['data','tipo','ente','esito'].forEach(col=>{const el=document.getElementById(`int_${i}_${col}`);d[`int_${i}_${col}`]=el?el.value:'';});
@@ -363,6 +388,8 @@ function caricaDati(d){
   ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'].forEach(name=>{if(d[name]){const el=document.querySelector(`input[name="${name}"][value="${d[name]}"]`);if(el)el.checked=true;}});
   document.getElementById('stp_presente').checked=d.stp_presente==='Sì';
   document.getElementById('stp_aggiornato').checked=d.stp_aggiornato==='Sì';
+  document.querySelectorAll('input[name="lavoro"]').forEach(el=>{el.checked=d.lavoro&&d.lavoro.includes(el.value);});
+  document.querySelectorAll('input[name="fascia_eta"]').forEach(el=>{el.checked=d.fascia_eta&&d.fascia_eta.includes(el.value);});
   document.querySelectorAll('input[name="permesso"]').forEach(el=>{el.checked=d.permesso&&d.permesso.includes(el.value);});
   document.querySelectorAll('input[name="area"]').forEach(el=>{el.checked=d.area&&d.area.includes(el.value);});
   for(let i=1;i<=8;i++)['data','tipo','ente','esito'].forEach(col=>{const el=document.getElementById(`int_${i}_${col}`);if(el&&d[`int_${i}_${col}`]!==undefined)el.value=d[`int_${i}_${col}`];});
