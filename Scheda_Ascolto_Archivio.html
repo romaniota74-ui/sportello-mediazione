@@ -369,10 +369,13 @@ let currentId=null,tutteLeSchede=[];
 function raccogliDati(){
   const d={};
   ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita',
-   'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare','n_minori',
+   'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare',
+   'minori_0_5','minori_6_11','minori_12_17',
    'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
    'note_giuridiche','area_altro','servizi_inviati','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value||'';});
+  // Calcola n_minori come somma delle fasce
+  d.n_minori=String((parseInt(d.minori_0_5)||0)+(parseInt(d.minori_6_11)||0)+(parseInt(d.minori_12_17)||0)||'');
   ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'
   ].forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);d[name]=el?el.value:'';});
   d.stp_presente=document.getElementById('stp_presente')?.checked?'Sì':'';
