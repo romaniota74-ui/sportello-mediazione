@@ -344,10 +344,7 @@ textarea{resize:vertical;}
 </div>
 
 <script>
-const FORMSPREE_URL="https://formspree.io/f/mqervdzw";
-const JSONBIN_ID="6a6e2144da38895dfead247d";
-const JSONBIN_KEY="$2a$10$4eQCJWw3jLlKNhdH/6CvEeV4Fr2AdFs4JRWe0x27BUqFm38qFxHQq";
-const JSONBIN_URL=`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+const GAS_URL="https://script.google.com/macros/s/AKfycbwl6TeF35V0-7dTavprnoUofPY68A-L5gF0mFLlBn-kqKfxpCl5nh-hTo71S9Avnq8/exec";
 let currentId=null,tutteLeSchede=[];
 function raccogliDati(){
   const d={};
@@ -375,19 +372,19 @@ async function salvaScheda(){
   const dati=raccogliDati();
   if(!currentId){currentId=Date.now().toString();dati._id=currentId;}
   try{
-    // Save to JSONBin
-    const idx=tutteLeSchede.findIndex(s=>s._id===currentId);
-    if(idx>=0)tutteLeSchede[idx]=dati; else tutteLeSchede.push(dati);
-    await fetch(JSONBIN_URL,{
-      method:'PUT',
-      headers:{'Content-Type':'application/json','X-Master-Key':JSONBIN_KEY,'X-Bin-Versioning':'false'},
-      body:JSON.stringify({schede:tutteLeSchede})
+    const resp=await fetch(GAS_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(dati)
     });
-    // Also send to Formspree for email backup
-    fetch(FORMSPREE_URL,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify(dati)});
-    document.getElementById('scheda-id-label').textContent=`ID: ${currentId}`;
-    mostraStatus('✓ Scheda salvata correttamente','ok');
-    renderArchivio(tutteLeSchede);
+    const result=await resp.json();
+    if(result.status==='created'||result.status==='updated'){
+      document.getElementById('scheda-id-label').textContent=`ID: ${currentId}`;
+      mostraStatus('✓ Scheda salvata correttamente','ok');
+      await caricaArchivio();
+    } else {
+      mostraStatus('✗ Errore: '+JSON.stringify(result),'err');
+    }
   }catch(e){mostraStatus('✗ Errore nel salvataggio: '+e.message,'err');}
 }
 function nuovaScheda(){
@@ -401,9 +398,9 @@ function nuovaScheda(){
 }
 async function caricaArchivio(){
   try{
-    const resp=await fetch(JSONBIN_URL+'/latest',{headers:{'X-Master-Key':JSONBIN_KEY}});
+    const resp=await fetch(GAS_URL);
     const data=await resp.json();
-    tutteLeSchede=data.record.schede||[];
+    tutteLeSchede=Array.isArray(data)?data:[];
     renderArchivio(tutteLeSchede);
   }catch(e){
     document.getElementById('schede-list').innerHTML='<div style="color:#aaa;font-size:12px;text-align:center;padding:16px">Errore caricamento archivio</div>';
@@ -440,27 +437,6 @@ function mostraStatus(msg,tipo){
   if(tipo!=='loading')setTimeout(()=>bar.style.display='none',4000);
 }
 caricaArchivio();
-function raccogliDati(){
-  const d={};
-  ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita','nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare','n_minori','eta_minori','residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica','note_giuridiche','area_altro','servizi_inviati','mediatore_chi','note_libere','data_prossimo'].forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value||'';});
-  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'].forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);d[name]=el?el.value:'';});
-  d.stp_presente=document.getElementById('stp_presente')?.checked?'Sì':'';
-  d.stp_aggiornato=document.getElementById('stp_aggiornato')?.checked?'Sì':'';
-  d.permesso=Array.from(document.querySelectorAll('input[name="permesso"]:checked')).map(el=>el.value).join(', ');
-  d.area=Array.from(document.querySelectorAll('input[name="area"]:checked')).map(el=>el.value).join(', ');
-  for(let i=1;i<=8;i++)['data','tipo','ente','esito'].forEach(col=>{const el=document.getElementById(`int_${i}_${col}`);d[`int_${i}_${col}`]=el?el.value:'';});
-  if(currentId)d._id=currentId;
-  return d;
-}
-function caricaDati(d){
-  ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita','nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare','n_minori','eta_minori','residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica','note_giuridiche','area_altro','servizi_inviati','mediatore_chi','note_libere','data_prossimo'].forEach(id=>{const el=document.getElementById(id);if(el&&d[id]!==undefined)el.value=d[id];});
-  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'].forEach(name=>{if(d[name]){const el=document.querySelector(`input[name="${name}"][value="${d[name]}"]`);if(el)el.checked=true;}});
-  document.getElementById('stp_presente').checked=d.stp_presente==='Sì';
-  document.getElementById('stp_aggiornato').checked=d.stp_aggiornato==='Sì';
-  document.querySelectorAll('input[name="permesso"]').forEach(el=>{el.checked=d.permesso&&d.permesso.includes(el.value);});
-  document.querySelectorAll('input[name="area"]').forEach(el=>{el.checked=d.area&&d.area.includes(el.value);});
-  for(let i=1;i<=8;i++)['data','tipo','ente','esito'].forEach(col=>{const el=document.getElementById(`int_${i}_${col}`);if(el&&d[`int_${i}_${col}`]!==undefined)el.value=d[`int_${i}_${col}`];});
-}
 </script>
 </body>
 </html>
