@@ -502,7 +502,25 @@ function caricaDati(d){
     if(el&&d[`int_${i}_${col}`]!==undefined) el.value = col==='data' ? formattaDataPerInput(d[`int_${i}_${col}`]) : d[`int_${i}_${col}`];
   });
   for(let i=1;i<=8;i++)calcolaEtaIntervento(i);
-}
+}function formattaDataPerInput(val){
+    if(!val) return '';
+    if(typeof val==='string' && /^\d{4}-\d{2}-\d{2}/.test(val)) return val.slice(0,10);
+    const dt=new Date(val);
+    if(isNaN(dt)) return '';
+    const yyyy=dt.getUTCFullYear();
+    const mm=String(dt.getUTCMonth()+1).padStart(2,'0');
+    const dd=String(dt.getUTCDate()).padStart(2,'0');
+    return `${yyyy}-${mm}-${dd}`;
+  }
+  ['data_colloquio','data_nascita','scadenza_permesso','data_prossimo'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el && d[id]!==undefined) el.value=formattaDataPerInput(d[id]);
+  });
+  for(let i=1;i<=8;i++){
+    const el=document.getElementById(`int_${i}_data`);
+    if(el && d[`int_${i}_data`]!==undefined) el.value=formattaDataPerInput(d[`int_${i}_data`]);
+  }
+  
 
 async function salvaScheda(){
   mostraStatus('Salvataggio in corso...','loading');
