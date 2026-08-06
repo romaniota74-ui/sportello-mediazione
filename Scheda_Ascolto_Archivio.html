@@ -457,13 +457,30 @@ function raccogliDati(){
   return d;
 }
 
+// Converte qualsiasi formato data (incl. quello con orario restituito da Google Sheets,
+// es. "2020-01-01T00:00:00.000Z") nel formato YYYY-MM-DD richiesto dagli <input type="date">.
+function formattaDataPerInput(val) {
+  if (!val) return '';
+  if (typeof val === 'string' && /^\d{4}-\d{2}-\d{2}/.test(val)) return val.slice(0, 10);
+  const d = new Date(val);
+  if (isNaN(d)) return '';
+  const yyyy = d.getUTCFullYear();
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 function caricaDati(d){
+  const CAMPI_DATA = ['data_colloquio', 'data_nascita', 'scadenza_permesso', 'data_prossimo'];
   ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita',
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare','n_minori',
    'istruzione_origine','istruzione_italia',
    'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
    'note_giuridiche','area_altro','servizi_inviati','mediatore_chi','note_libere','data_prossimo'
-  ].forEach(id=>{const el=document.getElementById(id);if(el&&d[id]!==undefined)el.value=d[id];});
+  ].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&d[id]!==undefined) el.value = CAMPI_DATA.includes(id) ? formattaDataPerInput(d[id]) : d[id];
+  });
   ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'
   ].forEach(name=>{if(d[name]){const el=document.querySelector(`input[name="${name}"][value="${d[name]}"]`);if(el)el.checked=true;}});
   document.getElementById('stp_presente').checked=d.stp_presente==='Sì';
@@ -482,7 +499,7 @@ function caricaDati(d){
   calcolaEtaAttuale();
   for(let i=1;i<=8;i++)['data','tipo','ente','esito'].forEach(col=>{
     const el=document.getElementById(`int_${i}_${col}`);
-    if(el&&d[`int_${i}_${col}`]!==undefined)el.value=d[`int_${i}_${col}`];
+    if(el&&d[`int_${i}_${col}`]!==undefined) el.value = col==='data' ? formattaDataPerInput(d[`int_${i}_${col}`]) : d[`int_${i}_${col}`];
   });
   for(let i=1;i<=8;i++)calcolaEtaIntervento(i);
 }
