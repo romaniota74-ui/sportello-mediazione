@@ -265,7 +265,6 @@ textarea{resize:vertical;}
         <label class="check-item"><input type="checkbox" name="area" value="Ascolto e orientamento"> Ascolto e orientamento</label>
         <label class="check-item"><input type="checkbox" name="area" value="Questura / Permessi"> Questura / Permessi di soggiorno</label>
         <label class="check-item"><input type="checkbox" name="area" value="Scuola e lingua"> Scuola e lingua</label>
-        <label class="check-item"><input type="checkbox" name="area" value="Servizi sociali"> Servizi sociali</label>
         <label class="check-item"><input type="checkbox" name="area" value="Casa / Alloggio"> Casa / Alloggio</label>
         <label class="check-item"><input type="checkbox" name="area" value="Lavoro / INPS"> Lavoro / INPS / Patronato</label>
         <label class="check-item"><input type="checkbox" name="area" value="Salute / SSN"> Salute / SSN / CSM</label>
@@ -274,10 +273,6 @@ textarea{resize:vertical;}
         <label class="check-item"><input type="checkbox" name="area" value="Decreto Flussi"> Decreto Flussi</label>
         <label class="check-item"><input type="checkbox" name="area" value="Regolamento di Dublino"> Regolamento di Dublino</label>
         <label class="check-item"><input type="checkbox" name="area" value="Associazionismo / RUNTS"> Associazionismo / RUNTS</label>
-        <label class="check-item"><input type="checkbox" name="area" value="PIS"> PIS</label>
-        <label class="check-item"><input type="checkbox" name="area" value="Educativa"> Educativa</label>
-        <label class="check-item"><input type="checkbox" name="area" value="PIPPI"> PIPPI</label>
-        <label class="check-item"><input type="checkbox" name="area" value="Integrazione"> Integrazione</label>
         <label class="check-item"><input type="checkbox" name="area" value="Altro"> Altro</label>
       </div>
       <div class="row" style="margin-top:4px">
@@ -375,7 +370,19 @@ textarea{resize:vertical;}
     </div>
     <div class="section">
       <div class="section-title">6. Rete e invii ad altri servizi</div>
-      <div class="row"><div class="field full"><label>Servizi / enti a cui la persona è stata inviata</label><textarea id="servizi_inviati" rows="2" style="width:100%"></textarea></div></div>
+      <div class="row"><div class="field full">
+        <label>Servizi / enti a cui la persona è stata inviata</label>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="Servizi Sociali"> Servizi Sociali</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="PIS"> PIS</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="Educativa"> Educativa</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="PIPPI"> PIPPI</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="Integrazione scolastica"> Integrazione scolastica</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="Forze dell'Ordine"> Forze dell'Ordine</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="Altro"> Altro</label>
+        </div>
+        <input type="text" id="servizi_invio_altro" placeholder="Se 'Altro', specificare" style="width:100%;margin-top:6px">
+      </div></div>
       <div class="row">
         <div class="field"><label>Mediatore / interprete coinvolto</label>
           <div class="check-group" style="margin:0">
@@ -431,7 +438,7 @@ function raccogliDati(){
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare',
    'istruzione_origine','istruzione_italia',
    'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
-   'note_giuridiche','area_altro','servizi_inviati','mediatore_chi','note_libere','data_prossimo'
+   'note_giuridiche','area_altro','servizi_invio_altro','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value||'';});
   ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'
   ].forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);d[name]=el?el.value:'';});
@@ -440,6 +447,7 @@ function raccogliDati(){
   d.permesso=Array.from(document.querySelectorAll('input[name="permesso"]:checked')).map(el=>el.value).join(', ');
   d.area=Array.from(document.querySelectorAll('input[name="area"]:checked')).map(el=>el.value).join(', ');
   d.lavoro=Array.from(document.querySelectorAll('input[name="lavoro"]:checked')).map(el=>el.value).join(', ');
+  d.servizi_invio=Array.from(document.querySelectorAll('input[name="servizi_invio"]:checked')).map(el=>el.value).join(', ');
   // Dati minori: anno di nascita e sesso (età non salvata, ricalcolata dinamicamente)
   let nMin=0;
   for(let i=1;i<=6;i++){
@@ -476,7 +484,7 @@ function caricaDati(d){
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare','n_minori',
    'istruzione_origine','istruzione_italia',
    'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
-   'note_giuridiche','area_altro','servizi_inviati','mediatore_chi','note_libere','data_prossimo'
+   'note_giuridiche','area_altro','servizi_invio_altro','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&d[id]!==undefined) el.value = CAMPI_DATA.includes(id) ? formattaDataPerInput(d[id]) : d[id];
@@ -488,6 +496,7 @@ function caricaDati(d){
   document.querySelectorAll('input[name="permesso"]').forEach(el=>{el.checked=d.permesso&&d.permesso.includes(el.value);});
   document.querySelectorAll('input[name="area"]').forEach(el=>{el.checked=d.area&&d.area.includes(el.value);});
   document.querySelectorAll('input[name="lavoro"]').forEach(el=>{el.checked=d.lavoro&&d.lavoro.includes(el.value);});
+  document.querySelectorAll('input[name="servizi_invio"]').forEach(el=>{el.checked=d.servizi_invio&&d.servizi_invio.includes(el.value);});
   for(let i=1;i<=6;i++){
     const anno=document.getElementById(`minore_${i}_anno`);
     const sesso=document.getElementById(`minore_${i}_sesso`);
