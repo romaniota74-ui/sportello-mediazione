@@ -95,7 +95,7 @@ textarea{resize:vertical;}
   </div>
   <div class="content">
     <div class="meta-row">
-      <div class="field"><label>Data colloquio</label><input type="date" id="data_colloquio" oninput="calcolaEtaAttuale();calcolaTotaleMinori();for(let i=1;i<=8;i++)calcolaEtaIntervento(i);"></div>
+      <div class="field"><label>Data colloquio</label><input type="date" id="data_colloquio" oninput="calcolaEtaAttuale();calcolaTotaleMinori();for(let i=1;i<=8;i++)calcolaEtaIntervento(i);" onchange="calcolaEtaAttuale();calcolaTotaleMinori();for(let i=1;i<=8;i++)calcolaEtaIntervento(i);"></div>
       <div class="field"><label>N° scheda</label><input type="text" id="numero_scheda" style="width:80px"></div>
       <div class="field grow"><label>Operatore / Mediatrice</label><input type="text" id="operatore"></div>
     </div>
@@ -107,8 +107,8 @@ textarea{resize:vertical;}
         <div class="field grow"><label>Nome</label><input type="text" id="nome"></div>
       </div>
       <div class="row">
-        <div class="field"><label>Data di nascita</label><input type="date" id="data_nascita" oninput="calcolaEtaAttuale();for(let i=1;i<=8;i++)calcolaEtaIntervento(i);"></div>
-        <div class="field"><label>Età attuale</label><input type="text" id="eta_attuale" style="width:60px" readonly></div>
+        <div class="field"><label>Data di nascita</label><input type="date" id="data_nascita" oninput="calcolaEtaAttuale();for(let i=1;i<=8;i++)calcolaEtaIntervento(i);" onchange="calcolaEtaAttuale();for(let i=1;i<=8;i++)calcolaEtaIntervento(i);"></div>
+        <div class="field"><label>Età al colloquio</label><input type="text" id="eta_attuale" style="width:60px" readonly></div>
         <div class="field grow"><label>Luogo di nascita</label><input type="text" id="luogo_nascita"></div>
         <div class="field"><label>Genere</label>
           <div class="check-group" style="margin:0">
@@ -184,12 +184,12 @@ textarea{resize:vertical;}
             <th style="width:8%">N°</th><th style="width:30%">Anno di nascita</th><th style="width:30%">Sesso</th><th style="width:20%">Età attuale</th>
           </tr></thead>
           <tbody>
-            <tr><td style="text-align:center;color:#aaa;font-size:11px">1</td><td><input type="text" id="minore_1_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()"></td><td><select id="minore_1_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_1_eta" readonly></td></tr>
-            <tr><td style="text-align:center;color:#aaa;font-size:11px">2</td><td><input type="text" id="minore_2_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()"></td><td><select id="minore_2_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_2_eta" readonly></td></tr>
-            <tr><td style="text-align:center;color:#aaa;font-size:11px">3</td><td><input type="text" id="minore_3_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()"></td><td><select id="minore_3_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_3_eta" readonly></td></tr>
-            <tr><td style="text-align:center;color:#aaa;font-size:11px">4</td><td><input type="text" id="minore_4_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()"></td><td><select id="minore_4_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_4_eta" readonly></td></tr>
-            <tr><td style="text-align:center;color:#aaa;font-size:11px">5</td><td><input type="text" id="minore_5_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()"></td><td><select id="minore_5_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_5_eta" readonly></td></tr>
-            <tr><td style="text-align:center;color:#aaa;font-size:11px">6</td><td><input type="text" id="minore_6_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()"></td><td><select id="minore_6_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_6_eta" readonly></td></tr>
+            <tr><td style="text-align:center;color:#aaa;font-size:11px">1</td><td><input type="text" id="minore_1_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()" onchange="calcolaTotaleMinori()"></td><td><select id="minore_1_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_1_eta" readonly></td></tr>
+            <tr><td style="text-align:center;color:#aaa;font-size:11px">2</td><td><input type="text" id="minore_2_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()" onchange="calcolaTotaleMinori()"></td><td><select id="minore_2_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_2_eta" readonly></td></tr>
+            <tr><td style="text-align:center;color:#aaa;font-size:11px">3</td><td><input type="text" id="minore_3_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()" onchange="calcolaTotaleMinori()"></td><td><select id="minore_3_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_3_eta" readonly></td></tr>
+            <tr><td style="text-align:center;color:#aaa;font-size:11px">4</td><td><input type="text" id="minore_4_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()" onchange="calcolaTotaleMinori()"></td><td><select id="minore_4_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_4_eta" readonly></td></tr>
+            <tr><td style="text-align:center;color:#aaa;font-size:11px">5</td><td><input type="text" id="minore_5_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()" onchange="calcolaTotaleMinori()"></td><td><select id="minore_5_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_5_eta" readonly></td></tr>
+            <tr><td style="text-align:center;color:#aaa;font-size:11px">6</td><td><input type="text" id="minore_6_anno" placeholder="es. 2015" oninput="calcolaTotaleMinori()" onchange="calcolaTotaleMinori()"></td><td><select id="minore_6_sesso"><option value=""></option><option value="M">M</option><option value="F">F</option><option value="Altro">Altro</option></select></td><td><input type="text" id="minore_6_eta" readonly></td></tr>
           </tbody>
         </table>
       </div>
@@ -311,56 +311,56 @@ textarea{resize:vertical;}
         </tr></thead>
         <tbody><tr>
   <td style="text-align:center;color:#aaa;font-size:11px">1</td>
-  <td><input type="date" id="int_1_data" oninput="calcolaEtaIntervento(1)"></td>
+  <td><input type="date" id="int_1_data" oninput="calcolaEtaIntervento(1)" onchange="calcolaEtaIntervento(1)"></td>
   <td><input type="text" id="int_1_eta" readonly></td>
   <td><input type="text" id="int_1_tipo"></td>
   <td><input type="text" id="int_1_ente"></td>
   <td><input type="text" id="int_1_esito"></td>
 </tr><tr>
   <td style="text-align:center;color:#aaa;font-size:11px">2</td>
-  <td><input type="date" id="int_2_data" oninput="calcolaEtaIntervento(2)"></td>
+  <td><input type="date" id="int_2_data" oninput="calcolaEtaIntervento(2)" onchange="calcolaEtaIntervento(2)"></td>
   <td><input type="text" id="int_2_eta" readonly></td>
   <td><input type="text" id="int_2_tipo"></td>
   <td><input type="text" id="int_2_ente"></td>
   <td><input type="text" id="int_2_esito"></td>
 </tr><tr>
   <td style="text-align:center;color:#aaa;font-size:11px">3</td>
-  <td><input type="date" id="int_3_data" oninput="calcolaEtaIntervento(3)"></td>
+  <td><input type="date" id="int_3_data" oninput="calcolaEtaIntervento(3)" onchange="calcolaEtaIntervento(3)"></td>
   <td><input type="text" id="int_3_eta" readonly></td>
   <td><input type="text" id="int_3_tipo"></td>
   <td><input type="text" id="int_3_ente"></td>
   <td><input type="text" id="int_3_esito"></td>
 </tr><tr>
   <td style="text-align:center;color:#aaa;font-size:11px">4</td>
-  <td><input type="date" id="int_4_data" oninput="calcolaEtaIntervento(4)"></td>
+  <td><input type="date" id="int_4_data" oninput="calcolaEtaIntervento(4)" onchange="calcolaEtaIntervento(4)"></td>
   <td><input type="text" id="int_4_eta" readonly></td>
   <td><input type="text" id="int_4_tipo"></td>
   <td><input type="text" id="int_4_ente"></td>
   <td><input type="text" id="int_4_esito"></td>
 </tr><tr>
   <td style="text-align:center;color:#aaa;font-size:11px">5</td>
-  <td><input type="date" id="int_5_data" oninput="calcolaEtaIntervento(5)"></td>
+  <td><input type="date" id="int_5_data" oninput="calcolaEtaIntervento(5)" onchange="calcolaEtaIntervento(5)"></td>
   <td><input type="text" id="int_5_eta" readonly></td>
   <td><input type="text" id="int_5_tipo"></td>
   <td><input type="text" id="int_5_ente"></td>
   <td><input type="text" id="int_5_esito"></td>
 </tr><tr>
   <td style="text-align:center;color:#aaa;font-size:11px">6</td>
-  <td><input type="date" id="int_6_data" oninput="calcolaEtaIntervento(6)"></td>
+  <td><input type="date" id="int_6_data" oninput="calcolaEtaIntervento(6)" onchange="calcolaEtaIntervento(6)"></td>
   <td><input type="text" id="int_6_eta" readonly></td>
   <td><input type="text" id="int_6_tipo"></td>
   <td><input type="text" id="int_6_ente"></td>
   <td><input type="text" id="int_6_esito"></td>
 </tr><tr>
   <td style="text-align:center;color:#aaa;font-size:11px">7</td>
-  <td><input type="date" id="int_7_data" oninput="calcolaEtaIntervento(7)"></td>
+  <td><input type="date" id="int_7_data" oninput="calcolaEtaIntervento(7)" onchange="calcolaEtaIntervento(7)"></td>
   <td><input type="text" id="int_7_eta" readonly></td>
   <td><input type="text" id="int_7_tipo"></td>
   <td><input type="text" id="int_7_ente"></td>
   <td><input type="text" id="int_7_esito"></td>
 </tr><tr>
   <td style="text-align:center;color:#aaa;font-size:11px">8</td>
-  <td><input type="date" id="int_8_data" oninput="calcolaEtaIntervento(8)"></td>
+  <td><input type="date" id="int_8_data" oninput="calcolaEtaIntervento(8)" onchange="calcolaEtaIntervento(8)"></td>
   <td><input type="text" id="int_8_eta" readonly></td>
   <td><input type="text" id="int_8_tipo"></td>
   <td><input type="text" id="int_8_ente"></td>
@@ -379,6 +379,10 @@ textarea{resize:vertical;}
           <label class="check-item"><input type="checkbox" name="servizi_invio" value="PIPPI"> PIPPI</label>
           <label class="check-item"><input type="checkbox" name="servizi_invio" value="Integrazione scolastica"> Integrazione scolastica</label>
           <label class="check-item"><input type="checkbox" name="servizi_invio" value="Forze dell'Ordine"> Forze dell'Ordine</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="Ospedale"> Ospedale</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="CSM"> CSM</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="Consultorio Famiglia"> Consultorio Famiglia</label>
+          <label class="check-item"><input type="checkbox" name="servizi_invio" value="SAI/CAS"> SAI/CAS</label>
           <label class="check-item"><input type="checkbox" name="servizi_invio" value="Altro"> Altro</label>
         </div>
         <input type="text" id="servizi_invio_altro" placeholder="Se 'Altro', specificare" style="width:100%;margin-top:6px">
