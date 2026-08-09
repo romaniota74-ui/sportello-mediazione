@@ -603,9 +603,12 @@ function mostraStatus(msg,tipo){
 // Calcola l'età di un minore alla data del colloquio (o, se non ancora compilata,
 // alla data odierna come riferimento provvisorio) a partire dall'anno di nascita,
 // e aggiorna il totale dei minori compilati nella tabella (n_minori).
+// Se il minore non era ancora nato alla data del colloquio (es. scheda inserita
+// retroattivamente per un bambino nato nel frattempo), mostra l'età attuale.
 function calcolaTotaleMinori(){
   const dataColloquio=document.getElementById('data_colloquio');
   const annoRif=(dataColloquio&&dataColloquio.value)?new Date(dataColloquio.value).getFullYear():new Date().getFullYear();
+  const annoCorrente=new Date().getFullYear();
   let tot=0;
   for(let i=1;i<=6;i++){
     const annoEl=document.getElementById(`minore_${i}_anno`);
@@ -613,7 +616,9 @@ function calcolaTotaleMinori(){
     if(!annoEl||!etaEl)continue;
     const anno=parseInt(annoEl.value);
     if(anno){
-      etaEl.value=annoRif-anno;
+      let e=annoRif-anno;
+      if(e<0)e=annoCorrente-anno;
+      etaEl.value=e>=0?e:'';
       tot++;
     }else{
       etaEl.value='';
