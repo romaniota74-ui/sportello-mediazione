@@ -95,7 +95,7 @@ textarea{resize:vertical;}
   </div>
   <div class="content">
     <div class="meta-row">
-      <div class="field"><label>Data colloquio</label><input type="date" id="data_colloquio"></div>
+      <div class="field"><label>Data colloquio</label><input type="date" id="data_colloquio" oninput="calcolaEtaAttuale();calcolaTotaleMinori();for(let i=1;i<=8;i++)calcolaEtaIntervento(i);"></div>
       <div class="field"><label>N° scheda</label><input type="text" id="numero_scheda" style="width:80px"></div>
       <div class="field grow"><label>Operatore / Mediatrice</label><input type="text" id="operatore"></div>
     </div>
@@ -593,10 +593,12 @@ function mostraStatus(msg,tipo){
   if(tipo!=='loading')setTimeout(()=>bar.style.display='none',4000);
 }
 
-// Calcola l'età di un minore alla data odierna a partire dall'anno di nascita
+// Calcola l'età di un minore alla data del colloquio (o, se non ancora compilata,
+// alla data odierna come riferimento provvisorio) a partire dall'anno di nascita,
 // e aggiorna il totale dei minori compilati nella tabella (n_minori).
 function calcolaTotaleMinori(){
-  const annoOggi=new Date().getFullYear();
+  const dataColloquio=document.getElementById('data_colloquio');
+  const annoRif=(dataColloquio&&dataColloquio.value)?new Date(dataColloquio.value).getFullYear():new Date().getFullYear();
   let tot=0;
   for(let i=1;i<=6;i++){
     const annoEl=document.getElementById(`minore_${i}_anno`);
@@ -604,7 +606,7 @@ function calcolaTotaleMinori(){
     if(!annoEl||!etaEl)continue;
     const anno=parseInt(annoEl.value);
     if(anno){
-      etaEl.value=annoOggi-anno;
+      etaEl.value=annoRif-anno;
       tot++;
     }else{
       etaEl.value='';
@@ -621,18 +623,20 @@ function toggleMinoriTable(){
   if(wrap)wrap.style.display=(si&&si.value==='si')?'':'none';
 }
 
-// Età attuale della persona, calcolata dinamicamente dalla data di nascita
-// (anno corrente - anno di nascita), non salvata come campo fisso.
+// Età della persona alla data del colloquio, calcolata dinamicamente dalla data
+// di nascita. Se la data colloquio non è ancora compilata si usa la data odierna
+// come riferimento provvisorio (es. per un colloquio che si sta facendo ora).
 function calcolaEtaAttuale(){
   const dataNascita=document.getElementById('data_nascita');
+  const dataColloquio=document.getElementById('data_colloquio');
   const etaEl=document.getElementById('eta_attuale');
   if(!dataNascita||!etaEl)return;
   if(!dataNascita.value){etaEl.value='';return;}
-  const oggi=new Date();
+  const riferimento=(dataColloquio&&dataColloquio.value)?new Date(dataColloquio.value):new Date();
   const nato=new Date(dataNascita.value);
-  let eta=oggi.getFullYear()-nato.getFullYear();
-  const mese=oggi.getMonth()-nato.getMonth();
-  if(mese<0||(mese===0&&oggi.getDate()<nato.getDate()))eta--;
+  let eta=riferimento.getFullYear()-nato.getFullYear();
+  const mese=riferimento.getMonth()-nato.getMonth();
+  if(mese<0||(mese===0&&riferimento.getDate()<nato.getDate()))eta--;
   etaEl.value=eta>=0?eta:'';
 }
 
