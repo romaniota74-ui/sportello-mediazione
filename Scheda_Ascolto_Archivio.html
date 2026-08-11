@@ -559,7 +559,10 @@ function nuovaScheda(){
 
 async function caricaArchivio(){
   try{
-    const resp=await fetch(GAS_URL);
+    // Cache-buster (?_t=timestamp) + no-store: forza il browser a richiedere sempre
+    // i dati aggiornati dal server, invece di riusare una risposta salvata in cache
+    // (che poteva far ricomparire valori vecchi, es. una data, subito dopo un salvataggio).
+    const resp=await fetch(GAS_URL+(GAS_URL.includes('?')?'&':'?')+'_t='+Date.now(),{cache:'no-store'});
     const data=await resp.json();
     tutteLeSchede=Array.isArray(data)?data:[];
     renderArchivio(tutteLeSchede);
