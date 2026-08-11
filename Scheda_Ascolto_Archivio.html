@@ -200,7 +200,8 @@ textarea{resize:vertical;}
       <div class="row"><div class="field full"><label>Comune di residenza / domicilio</label><input type="text" id="residenza"></div></div>
       <div class="check-group">
         <label style="font-size:11px;color:var(--gray);font-weight:600">Sistemazione:</label>
-        <label class="check-item"><input type="radio" name="sistemazione" value="Casa privata"> Casa privata</label>
+        <label class="check-item"><input type="radio" name="sistemazione" value="Affitto"> Affitto</label>
+        <label class="check-item"><input type="radio" name="sistemazione" value="Casa di proprietà"> Casa di proprietà</label>
         <label class="check-item"><input type="radio" name="sistemazione" value="CAS/SAI"> CAS/SAI</label>
         <label class="check-item"><input type="radio" name="sistemazione" value="Alloggio precario"> Alloggio precario</label>
         <label class="check-item"><input type="radio" name="sistemazione" value="Senza fissa dimora"> Senza fissa dimora</label>
@@ -235,6 +236,8 @@ textarea{resize:vertical;}
       <div style="margin-bottom:8px">
         <label style="font-size:11px;color:var(--gray);font-weight:600">Tipo di permesso di soggiorno:</label>
         <div class="check-group" style="margin-top:4px">
+          <label class="check-item"><input type="checkbox" name="permesso" value="Cittadino italiano"> Cittadino italiano (cittadinanza acquisita)</label>
+          <label class="check-item"><input type="checkbox" name="permesso" value="Cittadino europeo"> Cittadino europeo (UE, non necessita permesso)</label>
           <label class="check-item"><input type="checkbox" name="permesso" value="Protezione internazionale"> Protezione internazionale</label>
           <label class="check-item"><input type="checkbox" name="permesso" value="Protezione speciale"> Protezione speciale</label>
           <label class="check-item"><input type="checkbox" name="permesso" value="Motivi familiari"> Motivi familiari</label>
