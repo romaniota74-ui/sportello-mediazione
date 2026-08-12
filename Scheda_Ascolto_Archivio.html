@@ -524,9 +524,43 @@ function caricaDati(d){
   for(let i=1;i<=8;i++)calcolaEtaIntervento(i);
 }
 
+// Controlla se una data (formato YYYY-MM-DD) cade di sabato o domenica.
+// Costruisce il Date usando i componenti locali (anno, mese, giorno) invece di
+// new Date(stringa), per evitare lo stesso tipo di slittamento di fuso orario
+// già risolto lato server: new Date("2024-09-12") viene letta come UTC e può
+// restituire il giorno della settimana sbagliato in fusi orari come l'Italia.
+function isWeekend(dataStr){
+  if(!dataStr) return false;
+  const parti = dataStr.split('-');
+  if(parti.length !== 3) return false;
+  const d = new Date(parseInt(parti[0]), parseInt(parti[1]) - 1, parseInt(parti[2]));
+  const giorno = d.getDay(); // 0 = domenica, 6 = sabato
+  return giorno === 0 || giorno === 6;
+}
+
+// Verifica data_colloquio e tutte le date degli interventi (1-8): se una cade
+// di sabato o domenica, restituisce un messaggio con l'elenco dei campi da
+// correggere; altrimenti restituisce null (tutto ok).
+function trovaDateWeekend(dati){
+  const problemi = [];
+  if(isWeekend(dati.data_colloquio)) problemi.push('Data colloquio (' + dati.data_colloquio + ')');
+  for(let i=1;i<=8;i++){
+    const val = dati['int_'+i+'_data'];
+    if(isWeekend(val)) problemi.push('Data intervento ' + i + ' (' + val + ')');
+  }
+  if(problemi.length === 0) return null;
+  return 'Le seguenti date cadono di sabato o domenica, correggile prima di salvare:\n\n' + problemi.join('\n');
+}
+
 async function salvaScheda(){
   mostraStatus('Salvataggio in corso...','loading');
   const dati=raccogliDati();
+  const erroreWeekend = trovaDateWeekend(dati);
+  if(erroreWeekend){
+    alert(erroreWeekend);
+    mostraStatus('✗ Salvataggio bloccato: data di sabato o domenica','err');
+    return;
+  }
   if(!currentId){currentId=Date.now().toString();dati._id=currentId;}
   try{
     const resp=await fetch(GAS_URL,{
