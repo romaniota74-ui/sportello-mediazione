@@ -559,16 +559,34 @@ function nuovaScheda(){
 }
 
 async function caricaArchivio(){
+  const listEl = document.getElementById('schede-list');
   try{
     // Cache-buster (?_t=timestamp) + no-store: forza il browser a richiedere sempre
     // i dati aggiornati dal server, invece di riusare una risposta salvata in cache
     // (che poteva far ricomparire valori vecchi, es. una data, subito dopo un salvataggio).
     const resp=await fetch(GAS_URL+(GAS_URL.includes('?')?'&':'?')+'_t='+Date.now(),{cache:'no-store'});
-    const data=await resp.json();
-    tutteLeSchede=Array.isArray(data)?data:[];
+    const testo = await resp.text();
+    let data;
+    try {
+      data = JSON.parse(testo);
+    } catch (erroreParsing) {
+      // La risposta non è JSON valido: mostriamo il testo grezzo ricevuto (es. pagina
+      // di errore/login di Google) così si capisce subito cosa sta succedendo.
+      listEl.innerHTML = '<div style="color:#c00;font-size:12px;padding:16px;white-space:pre-wrap">'
+        + 'Risposta del server non valida (status ' + resp.status + '):\n\n'
+        + testo.slice(0, 500) + '</div>';
+      return;
+    }
+    tutteLeSchede = Array.isArray(data) ? data : [];
+    if (tutteLeSchede.length === 0) {
+      listEl.innerHTML = '<div style="color:#aaa;font-size:12px;text-align:center;padding:16px">'
+        + 'Il server ha risposto correttamente ma senza nessuna scheda (archivio vuoto).</div>';
+      return;
+    }
     renderArchivio(tutteLeSchede);
   }catch(e){
-    document.getElementById('schede-list').innerHTML='<div style="color:#aaa;font-size:12px;text-align:center;padding:16px">Errore caricamento archivio</div>';
+    listEl.innerHTML = '<div style="color:#c00;font-size:12px;padding:16px;white-space:pre-wrap">'
+      + 'Errore di rete durante il caricamento: ' + (e && e.message ? e.message : e) + '</div>';
   }
 }
 
