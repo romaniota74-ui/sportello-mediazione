@@ -232,6 +232,29 @@ textarea{resize:vertical;}
     </div>
 
     <div class="section">
+      <div class="section-title">2c. Flussi e spostamenti</div>
+      <label style="font-size:11px;color:var(--gray);font-weight:600">Tipo di spostamento:</label>
+      <div class="check-group" style="margin-top:4px">
+        <label class="check-item"><input type="radio" name="tipo_spostamento" value="Nessuno / non previsto"> Nessuno / non previsto</label>
+        <label class="check-item"><input type="radio" name="tipo_spostamento" value="Trasferimento altro comune (Italia)"> Trasferimento altro comune (Italia)</label>
+        <label class="check-item"><input type="radio" name="tipo_spostamento" value="Trasferimento estero"> Trasferimento estero</label>
+        <label class="check-item"><input type="radio" name="tipo_spostamento" value="Rientro in patria"> Rientro in patria</label>
+      </div>
+      <label style="font-size:11px;color:var(--gray);font-weight:600;margin-top:6px;display:block">Durata prevista:</label>
+      <div class="check-group" style="margin-top:4px">
+        <label class="check-item"><input type="radio" name="durata_spostamento" value="Breve periodo (< 12 mesi)"> Breve periodo (&lt; 12 mesi)</label>
+        <label class="check-item"><input type="radio" name="durata_spostamento" value="Lungo periodo / definitivo"> Lungo periodo / definitivo</label>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <div class="field grow"><label>Destinazione (comune / paese)</label><input type="text" id="spostamento_destinazione"></div>
+        <div class="field"><label>Data prevista/effettiva</label><input type="date" id="spostamento_data"></div>
+      </div>
+      <div class="row">
+        <div class="field full"><label>Note sullo spostamento</label><input type="text" id="spostamento_note"></div>
+      </div>
+    </div>
+
+    <div class="section">
       <div class="section-title">3. Situazione giuridica e amministrativa</div>
       <div style="margin-bottom:8px">
         <label style="font-size:11px;color:var(--gray);font-weight:600">Tipo di permesso di soggiorno:</label>
@@ -449,9 +472,11 @@ function raccogliDati(){
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare',
    'istruzione_origine','istruzione_italia',
    'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
+   'spostamento_destinazione','spostamento_data','spostamento_note',
    'note_giuridiche','area_altro','servizi_invio_altro','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value||'';});
-  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'
+  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso',
+   'tipo_spostamento','durata_spostamento'
   ].forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);d[name]=el?el.value:'';});
   d.stp_presente=document.getElementById('stp_presente')?.checked?'Sì':'';
   d.stp_aggiornato=document.getElementById('stp_aggiornato')?.checked?'Sì':'';
@@ -490,17 +515,19 @@ function formattaDataPerInput(val) {
 }
 
 function caricaDati(d){
-  const CAMPI_DATA = ['data_colloquio', 'data_nascita', 'scadenza_permesso', 'data_prossimo'];
+  const CAMPI_DATA = ['data_colloquio', 'data_nascita', 'scadenza_permesso', 'data_prossimo', 'spostamento_data'];
   ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita',
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare','n_minori',
    'istruzione_origine','istruzione_italia',
    'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
+   'spostamento_destinazione','spostamento_data','spostamento_note',
    'note_giuridiche','area_altro','servizi_invio_altro','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&d[id]!==undefined) el.value = CAMPI_DATA.includes(id) ? formattaDataPerInput(d[id]) : d[id];
   });
-  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'
+  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso',
+   'tipo_spostamento','durata_spostamento'
   ].forEach(name=>{if(d[name]){const el=document.querySelector(`input[name="${name}"][value="${d[name]}"]`);if(el)el.checked=true;}});
   document.getElementById('stp_presente').checked=d.stp_presente==='Sì';
   document.getElementById('stp_aggiornato').checked=d.stp_aggiornato==='Sì';
