@@ -36,7 +36,11 @@ body{font-family:var(--font);font-size:13px;color:#222;background:#ece8e8;paddin
 .content{padding:16px 22px;}
 .meta-row{display:flex;gap:14px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
 .section{margin-bottom:16px;}
-.section-title{background:var(--bx);color:white;font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;padding:4px 10px;margin-bottom:9px;border-radius:2px;}
+.section-title{background:var(--bx);color:white;font-weight:700;font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;padding:4px 10px;margin-bottom:9px;border-radius:2px;cursor:pointer;user-select:none;display:flex;justify-content:space-between;align-items:center;}
+.section-title::after{content:'▾';font-size:11px;transition:transform .15s;}
+.section.collapsed .section-title{margin-bottom:0;}
+.section.collapsed .section-title::after{transform:rotate(-90deg);}
+.section.collapsed>*:not(.section-title){display:none;}
 .row{display:flex;gap:10px;margin-bottom:7px;align-items:flex-end;flex-wrap:wrap;}
 .field{display:flex;flex-direction:column;gap:2px;}
 .field label{font-size:11px;color:var(--gray);font-weight:600;white-space:nowrap;}
@@ -101,7 +105,7 @@ textarea{resize:vertical;}
     </div>
 
     <div class="section">
-      <div class="section-title">1. Dati anagrafici</div>
+      <div class="section-title" onclick="toggleSection(this)">1. Dati anagrafici</div>
       <div class="row">
         <div class="field grow"><label>Cognome</label><input type="text" id="cognome"></div>
         <div class="field grow"><label>Nome</label><input type="text" id="nome"></div>
@@ -195,8 +199,8 @@ textarea{resize:vertical;}
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-title">2. Situazione abitativa e di arrivo</div>
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">2. Situazione abitativa e di arrivo</div>
       <div class="row"><div class="field full"><label>Comune di residenza / domicilio</label><input type="text" id="residenza"></div></div>
       <div class="check-group">
         <label style="font-size:11px;color:var(--gray);font-weight:600">Sistemazione:</label>
@@ -214,8 +218,8 @@ textarea{resize:vertical;}
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-title">2b. Situazione lavorativa</div>
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">2b. Situazione lavorativa</div>
       <label style="font-size:11px;color:var(--gray);font-weight:600">Tipologia di lavoro (anche più voci):</label>
       <div class="check-group" style="margin-top:4px">
         <label class="check-item"><input type="checkbox" name="lavoro" value="Agricoltura"> Agricoltura</label>
@@ -231,31 +235,237 @@ textarea{resize:vertical;}
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-title">2c. Flussi e spostamenti</div>
-      <label style="font-size:11px;color:var(--gray);font-weight:600">Tipo di spostamento:</label>
-      <div class="check-group" style="margin-top:4px">
-        <label class="check-item"><input type="radio" name="tipo_spostamento" value="Nessuno / non previsto"> Nessuno / non previsto</label>
-        <label class="check-item"><input type="radio" name="tipo_spostamento" value="Trasferimento altro comune (Italia)"> Trasferimento altro comune (Italia)</label>
-        <label class="check-item"><input type="radio" name="tipo_spostamento" value="Trasferimento estero"> Trasferimento estero</label>
-        <label class="check-item"><input type="radio" name="tipo_spostamento" value="Rientro in patria"> Rientro in patria</label>
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">2c. Flussi e spostamenti</div>
+      <div class="spost-card" style="background:var(--bxl);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span style="font-size:11px;color:var(--gray);font-weight:600">Evento 1</span>
+    <input type="date" id="spost_1_data" style="width:140px">
+  </div>
+  <div class="row">
+    <div class="field"><label>Fase</label>
+      <select id="spost_1_fase" onchange="toggleRitornoSpost(1)">
+        <option value=""></option>
+        <option value="Intenzione">Intenzione</option>
+        <option value="Comportamento">Comportamento (organizzazione partenza)</option>
+        <option value="Viaggio effettivo">Viaggio effettivo</option>
+      </select>
+    </div>
+    <div class="field"><label>Direzione</label>
+      <select id="spost_1_direzione">
+        <option value=""></option>
+        <option value="Altro comune italiano">Altro comune italiano</option>
+        <option value="Estero (Europa)">Estero (Europa)</option>
+        <option value="Rientro in patria">Rientro in patria</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field full"><label>Destinazione / Provenienza</label><input type="text" id="spost_1_destinazione"></div>
+  </div>
+  <div id="spost_1_ritorno_box" style="display:none;background:#fff;border-radius:6px;padding:8px;margin:6px 0;border:1px solid var(--line)">
+    <div class="row">
+      <div class="field"><label>È tornato/a?</label>
+        <select id="spost_1_ritorno">
+          <option value="">Non ancora noto</option>
+          <option value="Sì">Sì</option>
+          <option value="No">No</option>
+        </select>
       </div>
-      <label style="font-size:11px;color:var(--gray);font-weight:600;margin-top:6px;display:block">Durata prevista:</label>
-      <div class="check-group" style="margin-top:4px">
-        <label class="check-item"><input type="radio" name="durata_spostamento" value="Breve periodo (< 12 mesi)"> Breve periodo (&lt; 12 mesi)</label>
-        <label class="check-item"><input type="radio" name="durata_spostamento" value="Lungo periodo / definitivo"> Lungo periodo / definitivo</label>
+      <div class="field"><label>Motivazione ritorno</label><input type="text" id="spost_1_motivazione"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field full"><label>Note</label><input type="text" id="spost_1_note"></div>
+  </div>
+</div><div class="spost-card" id="spost_2_card" style="display:none;background:var(--bxl);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span style="font-size:11px;color:var(--gray);font-weight:600">Evento 2</span>
+    <input type="date" id="spost_2_data" style="width:140px">
+  </div>
+  <div class="row">
+    <div class="field"><label>Fase</label>
+      <select id="spost_2_fase" onchange="toggleRitornoSpost(2)">
+        <option value=""></option>
+        <option value="Intenzione">Intenzione</option>
+        <option value="Comportamento">Comportamento (organizzazione partenza)</option>
+        <option value="Viaggio effettivo">Viaggio effettivo</option>
+      </select>
+    </div>
+    <div class="field"><label>Direzione</label>
+      <select id="spost_2_direzione">
+        <option value=""></option>
+        <option value="Altro comune italiano">Altro comune italiano</option>
+        <option value="Estero (Europa)">Estero (Europa)</option>
+        <option value="Rientro in patria">Rientro in patria</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field full"><label>Destinazione / Provenienza</label><input type="text" id="spost_2_destinazione"></div>
+  </div>
+  <div id="spost_2_ritorno_box" style="display:none;background:#fff;border-radius:6px;padding:8px;margin:6px 0;border:1px solid var(--line)">
+    <div class="row">
+      <div class="field"><label>È tornato/a?</label>
+        <select id="spost_2_ritorno">
+          <option value="">Non ancora noto</option>
+          <option value="Sì">Sì</option>
+          <option value="No">No</option>
+        </select>
       </div>
-      <div class="row" style="margin-top:6px">
-        <div class="field grow"><label>Destinazione (comune / paese)</label><input type="text" id="spostamento_destinazione"></div>
-        <div class="field"><label>Data prevista/effettiva</label><input type="date" id="spostamento_data"></div>
+      <div class="field"><label>Motivazione ritorno</label><input type="text" id="spost_2_motivazione"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field full"><label>Note</label><input type="text" id="spost_2_note"></div>
+  </div>
+</div><div class="spost-card" id="spost_3_card" style="display:none;background:var(--bxl);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span style="font-size:11px;color:var(--gray);font-weight:600">Evento 3</span>
+    <input type="date" id="spost_3_data" style="width:140px">
+  </div>
+  <div class="row">
+    <div class="field"><label>Fase</label>
+      <select id="spost_3_fase" onchange="toggleRitornoSpost(3)">
+        <option value=""></option>
+        <option value="Intenzione">Intenzione</option>
+        <option value="Comportamento">Comportamento (organizzazione partenza)</option>
+        <option value="Viaggio effettivo">Viaggio effettivo</option>
+      </select>
+    </div>
+    <div class="field"><label>Direzione</label>
+      <select id="spost_3_direzione">
+        <option value=""></option>
+        <option value="Altro comune italiano">Altro comune italiano</option>
+        <option value="Estero (Europa)">Estero (Europa)</option>
+        <option value="Rientro in patria">Rientro in patria</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field full"><label>Destinazione / Provenienza</label><input type="text" id="spost_3_destinazione"></div>
+  </div>
+  <div id="spost_3_ritorno_box" style="display:none;background:#fff;border-radius:6px;padding:8px;margin:6px 0;border:1px solid var(--line)">
+    <div class="row">
+      <div class="field"><label>È tornato/a?</label>
+        <select id="spost_3_ritorno">
+          <option value="">Non ancora noto</option>
+          <option value="Sì">Sì</option>
+          <option value="No">No</option>
+        </select>
       </div>
-      <div class="row">
-        <div class="field full"><label>Note sullo spostamento</label><input type="text" id="spostamento_note"></div>
+      <div class="field"><label>Motivazione ritorno</label><input type="text" id="spost_3_motivazione"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field full"><label>Note</label><input type="text" id="spost_3_note"></div>
+  </div>
+</div><div class="spost-card" id="spost_4_card" style="display:none;background:var(--bxl);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <span style="font-size:11px;color:var(--gray);font-weight:600">Evento 4</span>
+    <input type="date" id="spost_4_data" style="width:140px">
+  </div>
+  <div class="row">
+    <div class="field"><label>Fase</label>
+      <select id="spost_4_fase" onchange="toggleRitornoSpost(4)">
+        <option value=""></option>
+        <option value="Intenzione">Intenzione</option>
+        <option value="Comportamento">Comportamento (organizzazione partenza)</option>
+        <option value="Viaggio effettivo">Viaggio effettivo</option>
+      </select>
+    </div>
+    <div class="field"><label>Direzione</label>
+      <select id="spost_4_direzione">
+        <option value=""></option>
+        <option value="Altro comune italiano">Altro comune italiano</option>
+        <option value="Estero (Europa)">Estero (Europa)</option>
+        <option value="Rientro in patria">Rientro in patria</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field full"><label>Destinazione / Provenienza</label><input type="text" id="spost_4_destinazione"></div>
+  </div>
+  <div id="spost_4_ritorno_box" style="display:none;background:#fff;border-radius:6px;padding:8px;margin:6px 0;border:1px solid var(--line)">
+    <div class="row">
+      <div class="field"><label>È tornato/a?</label>
+        <select id="spost_4_ritorno">
+          <option value="">Non ancora noto</option>
+          <option value="Sì">Sì</option>
+          <option value="No">No</option>
+        </select>
       </div>
+      <div class="field"><label>Motivazione ritorno</label><input type="text" id="spost_4_motivazione"></div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="field full"><label>Note</label><input type="text" id="spost_4_note"></div>
+  </div>
+</div>
     </div>
 
-    <div class="section">
-      <div class="section-title">3. Situazione giuridica e amministrativa</div>
+      <button type="button" id="spost-add-btn" onclick="aggiungiSpostCard()"
+        style="width:100%;background:none;border:1px dashed var(--line);border-radius:6px;padding:7px;font-size:12px;color:var(--gray);cursor:pointer">
+        + Aggiungi spostamento
+      </button>
+
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">2d. Condizione lavorativa</div>
+      <div style="font-size:11px;color:var(--gray);margin-bottom:8px">Seleziona una o più condizioni riscontrate (possono coesistere)</div>
+
+    <div class="cond-lavoro-card" style="border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:7px">
+      <label class="check-item" style="font-weight:600;font-size:13px">
+        <input type="checkbox" name="cond_lavoro" value="Lavoro povero" id="cond_LP" onchange="toggleCondLavoro('LP')">
+        Lavoro povero
+      </label>
+      <div id="cond_LP_ind" style="display:none;background:var(--bxl);border-radius:6px;padding:8px;margin-top:7px">
+        <div style="font-size:10.5px;color:var(--gray);font-weight:600;margin-bottom:5px">Indicatori riscontrati</div>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LP" value="Retribuzione insufficiente al tenore di vita anche con contratto regolare" style="margin-top:2px">Retribuzione insufficiente al tenore di vita anche con contratto regolare</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LP" value="Part-time involontario / orario ridotto imposto" style="margin-top:2px">Part-time involontario / orario ridotto imposto</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LP" value="Necessità di un secondo lavoro per arrivare a fine mese" style="margin-top:2px">Necessità di un secondo lavoro per arrivare a fine mese</label>
+      </div>
+    </div>
+    <div class="cond-lavoro-card" style="border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:7px">
+      <label class="check-item" style="font-weight:600;font-size:13px">
+        <input type="checkbox" name="cond_lavoro" value="Lavoro grigio" id="cond_LG" onchange="toggleCondLavoro('LG')">
+        Lavoro grigio
+      </label>
+      <div id="cond_LG_ind" style="display:none;background:var(--bxl);border-radius:6px;padding:8px;margin-top:7px">
+        <div style="font-size:10.5px;color:var(--gray);font-weight:600;margin-bottom:5px">Indicatori riscontrati</div>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LG" value="Ore lavorate superiori a quelle dichiarate in busta paga" style="margin-top:2px">Ore lavorate superiori a quelle dichiarate in busta paga</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LG" value="Parte della retribuzione corrisposta in contanti "fuori busta"" style="margin-top:2px">Parte della retribuzione corrisposta in contanti "fuori busta"</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LG" value="Contratto part-time con orario di fatto full-time" style="margin-top:2px">Contratto part-time con orario di fatto full-time</label>
+      </div>
+    </div>
+    <div class="cond-lavoro-card" style="border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:7px">
+      <label class="check-item" style="font-weight:600;font-size:13px">
+        <input type="checkbox" name="cond_lavoro" value="Sfruttamento lavorativo" id="cond_SL" onchange="toggleCondLavoro('SL')">
+        Sfruttamento lavorativo
+      </label>
+      <div id="cond_SL_ind" style="display:none;background:var(--bxl);border-radius:6px;padding:8px;margin-top:7px">
+        <div style="font-size:10.5px;color:var(--gray);font-weight:600;margin-bottom:5px">Indicatori riscontrati</div>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_SL" value="Retribuzione palesemente difforme dai contratti collettivi o sproporzionata" style="margin-top:2px">Retribuzione palesemente difforme dai contratti collettivi o sproporzionata</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_SL" value="Violazione sistematica di orario di lavoro, riposo settimanale, ferie" style="margin-top:2px">Violazione sistematica di orario di lavoro, riposo settimanale, ferie</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_SL" value="Violazioni sicurezza/igiene pericolose per salute o incolumità" style="margin-top:2px">Violazioni sicurezza/igiene pericolose per salute o incolumità</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_SL" value="Condizioni di lavoro, sorveglianza o alloggio degradanti" style="margin-top:2px">Condizioni di lavoro, sorveglianza o alloggio degradanti</label>
+      </div>
+    </div>
+    <div class="cond-lavoro-card" style="border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:7px">
+      <label class="check-item" style="font-weight:600;font-size:13px">
+        <input type="checkbox" name="cond_lavoro" value="Lavoro nero" id="cond_LN" onchange="toggleCondLavoro('LN')">
+        Lavoro nero
+      </label>
+      <div id="cond_LN_ind" style="display:none;background:var(--bxl);border-radius:6px;padding:8px;margin-top:7px">
+        <div style="font-size:10.5px;color:var(--gray);font-weight:600;margin-bottom:5px">Indicatori riscontrati</div>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LN" value="Nessun contratto di lavoro" style="margin-top:2px">Nessun contratto di lavoro</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LN" value="Nessuna iscrizione INPS/INAIL" style="margin-top:2px">Nessuna iscrizione INPS/INAIL</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_LN" value="Nessuna tutela in caso di infortunio o malattia" style="margin-top:2px">Nessuna tutela in caso di infortunio o malattia</label>
+      </div>
+    </div>
+    </div>
+
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">3. Situazione giuridica e amministrativa</div>
       <div style="margin-bottom:8px">
         <label style="font-size:11px;color:var(--gray);font-weight:600">Tipo di permesso di soggiorno:</label>
         <div class="check-group" style="margin-top:4px">
@@ -287,8 +497,8 @@ textarea{resize:vertical;}
       <div class="row"><div class="field full"><label>Note giuridiche</label><input type="text" id="note_giuridiche"></div></div>
     </div>
 
-    <div class="section">
-      <div class="section-title">4. Aree di bisogno / motivo del colloquio</div>
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">4. Aree di bisogno / motivo del colloquio</div>
       <div class="check-group">
         <label class="check-item"><input type="checkbox" name="area" value="Anagrafe e stato civile"> Anagrafe e stato civile</label>
         <label class="check-item"><input type="checkbox" name="area" value="Ascolto e orientamento"> Ascolto e orientamento</label>
@@ -329,8 +539,8 @@ textarea{resize:vertical;}
     <p>Ambito Sociale Territoriale di Gagliano del Capo</p>
   </div>
   <div class="content">
-    <div class="section">
-      <div class="section-title">5. Interventi effettuati</div>
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">5. Interventi effettuati</div>
       <table class="int-table">
         <thead><tr>
           <th style="width:4%">N°</th><th style="width:12%">Data</th>
@@ -398,8 +608,8 @@ textarea{resize:vertical;}
 </tr></tbody>
       </table>
     </div>
-    <div class="section">
-      <div class="section-title">6. Rete e invii ad altri servizi</div>
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">6. Rete e invii ad altri servizi</div>
       <div class="row"><div class="field full">
         <label>Servizi / enti a cui la persona è stata inviata</label>
         <div class="check-group">
@@ -427,8 +637,8 @@ textarea{resize:vertical;}
         <div class="field grow"><label>Chi</label><input type="text" id="mediatore_chi"></div>
       </div>
     </div>
-    <div class="section">
-      <div class="section-title">7. Note e follow-up</div>
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">7. Note e follow-up</div>
       <div class="row"><div class="field full"><label>Note libere</label><textarea id="note_libere" rows="6" style="width:100%"></textarea></div></div>
       <div class="row">
         <div class="field"><label>Data prossimo contatto</label><input type="date" id="data_prossimo"></div>
@@ -441,8 +651,8 @@ textarea{resize:vertical;}
         </div>
       </div>
     </div>
-    <div class="section">
-      <div class="section-title">8. Consenso al trattamento dati</div>
+    <div class="section collapsed">
+      <div class="section-title" onclick="toggleSection(this)">8. Consenso al trattamento dati</div>
       <p style="font-size:11px;color:#555;margin-bottom:8px;line-height:1.5">La persona è stata informata del trattamento dei propri dati personali ai sensi del Reg. UE 679/2016 (GDPR). I dati sono trattati esclusivamente per finalità di orientamento e supporto nell'ambito del servizio.</p>
       <div class="check-group" style="margin-bottom:12px">
         <label class="check-item"><input type="radio" name="consenso" value="Espresso"> <strong>Consenso espresso</strong></label>
@@ -472,11 +682,15 @@ function raccogliDati(){
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare',
    'istruzione_origine','istruzione_italia',
    'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
-   'spostamento_destinazione','spostamento_data','spostamento_note',
    'note_giuridiche','area_altro','servizi_invio_altro','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value||'';});
-  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso',
-   'tipo_spostamento','durata_spostamento'
+  for(let i=1;i<=4;i++){
+    ['data','fase','direzione','destinazione','ritorno','motivazione','note'].forEach(campo=>{
+      const el=document.getElementById('spost_'+i+'_'+campo);
+      if(el)d['spost_'+i+'_'+campo]=el.value||'';
+    });
+  }
+  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'
   ].forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);d[name]=el?el.value:'';});
   d.stp_presente=document.getElementById('stp_presente')?.checked?'Sì':'';
   d.stp_aggiornato=document.getElementById('stp_aggiornato')?.checked?'Sì':'';
@@ -484,6 +698,10 @@ function raccogliDati(){
   d.area=Array.from(document.querySelectorAll('input[name="area"]:checked')).map(el=>el.value).join(', ');
   d.lavoro=Array.from(document.querySelectorAll('input[name="lavoro"]:checked')).map(el=>el.value).join(', ');
   d.servizi_invio=Array.from(document.querySelectorAll('input[name="servizi_invio"]:checked')).map(el=>el.value).join(', ');
+  d.cond_lavoro=Array.from(document.querySelectorAll('input[name="cond_lavoro"]:checked')).map(el=>el.value).join(', ');
+  ['ind_LP','ind_LG','ind_SL','ind_LN'].forEach(nome=>{
+    d[nome]=Array.from(document.querySelectorAll(`input[name="${nome}"]:checked`)).map(el=>el.value).join(', ');
+  });
   // Dati minori: anno di nascita e sesso (età non salvata, ricalcolata dinamicamente)
   let nMin=0;
   for(let i=1;i<=6;i++){
@@ -515,19 +733,28 @@ function formattaDataPerInput(val) {
 }
 
 function caricaDati(d){
-  const CAMPI_DATA = ['data_colloquio', 'data_nascita', 'scadenza_permesso', 'data_prossimo', 'spostamento_data'];
+  const CAMPI_DATA = ['data_colloquio', 'data_nascita', 'scadenza_permesso', 'data_prossimo',
+    'spost_1_data','spost_2_data','spost_3_data','spost_4_data'];
   ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita',
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare','n_minori',
    'istruzione_origine','istruzione_italia',
    'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
-   'spostamento_destinazione','spostamento_data','spostamento_note',
    'note_giuridiche','area_altro','servizi_invio_altro','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{
     const el=document.getElementById(id);
     if(el&&d[id]!==undefined) el.value = CAMPI_DATA.includes(id) ? formattaDataPerInput(d[id]) : d[id];
   });
-  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso',
-   'tipo_spostamento','durata_spostamento'
+  for(let i=1;i<=4;i++){
+    ['data','fase','direzione','destinazione','ritorno','motivazione','note'].forEach(campo=>{
+      const chiave='spost_'+i+'_'+campo;
+      const el=document.getElementById(chiave);
+      if(el&&d[chiave]!==undefined) el.value = campo==='data' ? formattaDataPerInput(d[chiave]) : d[chiave];
+    });
+    toggleRitornoSpost(i);
+  }
+  mostraSpostCardConDati(d);
+  espandiTutteLeSezioni();
+  ['genere','interprete','minori','sistemazione','mediatore','stato_pratica_r','consenso'
   ].forEach(name=>{if(d[name]){const el=document.querySelector(`input[name="${name}"][value="${d[name]}"]`);if(el)el.checked=true;}});
   document.getElementById('stp_presente').checked=d.stp_presente==='Sì';
   document.getElementById('stp_aggiornato').checked=d.stp_aggiornato==='Sì';
@@ -535,6 +762,11 @@ function caricaDati(d){
   document.querySelectorAll('input[name="area"]').forEach(el=>{el.checked=d.area&&d.area.includes(el.value);});
   document.querySelectorAll('input[name="lavoro"]').forEach(el=>{el.checked=d.lavoro&&d.lavoro.includes(el.value);});
   document.querySelectorAll('input[name="servizi_invio"]').forEach(el=>{el.checked=d.servizi_invio&&d.servizi_invio.includes(el.value);});
+  document.querySelectorAll('input[name="cond_lavoro"]').forEach(el=>{el.checked=d.cond_lavoro&&d.cond_lavoro.includes(el.value);});
+  ['ind_LP','ind_LG','ind_SL','ind_LN'].forEach(nome=>{
+    document.querySelectorAll(`input[name="${nome}"]`).forEach(el=>{el.checked=d[nome]&&d[nome].includes(el.value);});
+  });
+  ['LP','LG','SL','LN'].forEach(codice=>toggleCondLavoro(codice));
   for(let i=1;i<=6;i++){
     const anno=document.getElementById(`minore_${i}_anno`);
     const sesso=document.getElementById(`minore_${i}_sesso`);
@@ -616,6 +848,11 @@ function nuovaScheda(){
   document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
   document.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
   toggleMinoriTable();
+  for(let i=1;i<=4;i++) toggleRitornoSpost(i);
+  ['LP','LG','SL','LN'].forEach(codice=>toggleCondLavoro(codice));
+  for(let i=2;i<=4;i++) document.getElementById('spost_'+i+'_card').style.display='none';
+  document.getElementById('spost-add-btn').style.display='block';
+  collassaSezioni();
   mostraStatus('Nuova scheda pronta','ok');
 }
 
@@ -691,6 +928,68 @@ function mostraStatus(msg,tipo){
 // e aggiorna il totale dei minori compilati nella tabella (n_minori).
 // Se il minore non era ancora nato alla data del colloquio (es. scheda inserita
 // retroattivamente per un bambino nato nel frattempo), mostra l'età attuale.
+// Mostra il riquadro "È tornato/a? / Motivazione ritorno" solo quando la Fase
+// selezionata per quell'evento è "Viaggio effettivo" (gli altri campi non sono
+// pertinenti per una semplice intenzione o un comportamento preparatorio).
+// Apre/chiude una sezione del form cliccando sul suo titolo, per risparmiare spazio.
+// Mostra/nasconde il riquadro indicatori di una categoria di condizione lavorativa
+// (LP/LG/SL/LN) in base al fatto che la relativa casella principale sia spuntata.
+function toggleCondLavoro(codice){
+  const checkbox = document.getElementById('cond_'+codice);
+  const box = document.getElementById('cond_'+codice+'_ind');
+  if(box) box.style.display = checkbox.checked ? 'block' : 'none';
+}
+
+function toggleSection(titleEl){
+  titleEl.parentElement.classList.toggle('collapsed');
+}
+
+// Espande tutte le sezioni: usata quando si apre una scheda esistente, così l'operatore
+// vede subito tutti i dati già inseriti senza dover cliccare sezione per sezione.
+function espandiTutteLeSezioni(){
+  document.querySelectorAll('.section.collapsed').forEach(s=>s.classList.remove('collapsed'));
+}
+
+// Ricollassa tutte le sezioni tranne la prima (Dati anagrafici): usata per una scheda nuova.
+function collassaSezioni(){
+  document.querySelectorAll('.section').forEach((s,i)=>{ if(i>0) s.classList.add('collapsed'); });
+}
+
+// Rivela la prossima scheda spostamento nascosta (2, 3 o 4). Quando arriva
+// all'ultima (4), nasconde il pulsante "+ Aggiungi" perché non ce ne sono altre.
+function aggiungiSpostCard(){
+  for(let i=2;i<=4;i++){
+    const card=document.getElementById('spost_'+i+'_card');
+    if(card && card.style.display==='none'){
+      card.style.display='block';
+      if(i===4) document.getElementById('spost-add-btn').style.display='none';
+      return;
+    }
+  }
+}
+
+// Rivela tutte le schede spostamento che hanno almeno un campo compilato
+// (usata quando si apre una scheda esistente, per non nascondere dati già presenti).
+function mostraSpostCardConDati(d){
+  let ultimaVisibile=1;
+  for(let i=2;i<=4;i++){
+    const haDati=['data','fase','direzione','destinazione','ritorno','motivazione','note']
+      .some(campo=>d['spost_'+i+'_'+campo]);
+    if(haDati){
+      document.getElementById('spost_'+i+'_card').style.display='block';
+      ultimaVisibile=i;
+    }
+  }
+  const btn=document.getElementById('spost-add-btn');
+  if(btn) btn.style.display = (ultimaVisibile>=4) ? 'none' : 'block';
+}
+
+function toggleRitornoSpost(i){
+  const fase = document.getElementById('spost_'+i+'_fase').value;
+  const box = document.getElementById('spost_'+i+'_ritorno_box');
+  if(box) box.style.display = (fase === 'Viaggio effettivo') ? 'block' : 'none';
+}
+
 function calcolaTotaleMinori(){
   const dataColloquio=document.getElementById('data_colloquio');
   const annoRif=(dataColloquio&&dataColloquio.value)?new Date(dataColloquio.value).getFullYear():new Date().getFullYear();
