@@ -448,6 +448,7 @@ textarea{resize:vertical;}
       <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_SL" value="Violazione sistematica di orario di lavoro, riposo settimanale, ferie" style="margin-top:2px">Violazione sistematica di orario di lavoro, riposo settimanale, ferie</label>
       <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_SL" value="Violazioni sicurezza/igiene pericolose per salute o incolumità" style="margin-top:2px">Violazioni sicurezza/igiene pericolose per salute o incolumità</label>
       <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_SL" value="Condizioni di lavoro, sorveglianza o alloggio degradanti" style="margin-top:2px">Condizioni di lavoro, sorveglianza o alloggio degradanti</label>
+      <label class="check-item" style="font-size:12px;display:flex;align-items:flex-start;gap:5px;margin-bottom:4px"><input type="checkbox" name="ind_SL" value="Falsa partita IVA / lavoro autonomo fittizio per mascherare un rapporto di subordinazione" style="margin-top:2px">Falsa partita IVA / lavoro autonomo fittizio per mascherare un rapporto di subordinazione</label>
       </div>
     </div>
     <div class="cond-lavoro-card" style="border:1px solid var(--line);border-radius:8px;padding:9px;margin-bottom:7px">
@@ -733,6 +734,7 @@ function formattaDataPerInput(val) {
 }
 
 function caricaDati(d){
+  resetForm();
   const CAMPI_DATA = ['data_colloquio', 'data_nascita', 'scadenza_permesso', 'data_prossimo',
     'spost_1_data','spost_2_data','spost_3_data','spost_4_data'];
   ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita',
@@ -839,10 +841,12 @@ caricaArchivio();
   }catch(e){mostraStatus('✗ Errore nel salvataggio: '+e.message,'err');}
 }
 
-function nuovaScheda(){
-  if(!confirm('Vuoi iniziare una nuova scheda? I dati non salvati andranno persi.'))return;
-  currentId=null;
-  document.getElementById('scheda-id-label').textContent='';
+// Azzera completamente il form: usata sia per "Nuova scheda" sia (fondamentale)
+// PRIMA di caricare i dati di una scheda esistente. Senza questo passaggio, un
+// campo assente nella scheda che si sta aprendo (es. una scheda vecchia senza
+// spostamenti o senza condizione lavorativa) manteneva il valore della scheda
+// precedentemente visualizzata invece di risultare vuoto.
+function resetForm(){
   document.querySelectorAll('input[type="text"],input[type="date"],textarea').forEach(el=>el.value='');
   document.querySelectorAll('input[type="checkbox"]').forEach(el=>el.checked=false);
   document.querySelectorAll('input[type="radio"]').forEach(el=>el.checked=false);
@@ -852,6 +856,13 @@ function nuovaScheda(){
   ['LP','LG','SL','LN'].forEach(codice=>toggleCondLavoro(codice));
   for(let i=2;i<=4;i++) document.getElementById('spost_'+i+'_card').style.display='none';
   document.getElementById('spost-add-btn').style.display='block';
+}
+
+function nuovaScheda(){
+  if(!confirm('Vuoi iniziare una nuova scheda? I dati non salvati andranno persi.'))return;
+  currentId=null;
+  document.getElementById('scheda-id-label').textContent='';
+  resetForm();
   collassaSezioni();
   mostraStatus('Nuova scheda pronta','ok');
 }
