@@ -65,6 +65,51 @@ textarea{resize:vertical;}
 </head>
 <body>
 
+<div id="password-overlay" style="position:fixed;inset:0;background:var(--bxd,#9B3A4A);z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px">
+  <div style="background:white;border-radius:10px;padding:28px 24px;max-width:320px;width:100%;box-shadow:0 4px 20px rgba(0,0,0,.3)">
+    <div style="font-size:15px;font-weight:700;color:var(--bxd,#9B3A4A);margin-bottom:4px">Sportello di Mediazione</div>
+    <div style="font-size:12px;color:#666;margin-bottom:16px">Inserisci la password per accedere</div>
+    <input type="password" id="password-input" placeholder="Password" style="width:100%;padding:9px;border:1px solid #ccc;border-radius:5px;font-size:14px;box-sizing:border-box" autocomplete="off">
+    <button onclick="verificaPassword()" style="width:100%;margin-top:10px;padding:9px;background:var(--bxd,#9B3A4A);color:white;border:none;border-radius:5px;font-size:14px;font-weight:600;cursor:pointer">Accedi</button>
+    <div id="password-errore" style="color:#c00;font-size:12px;margin-top:8px;display:none">Password errata, riprova.</div>
+  </div>
+</div>
+
+<script>
+// Protezione base lato client: scoraggia accessi casuali, ma NON è una vera sicurezza
+// (chiunque sappia usare gli strumenti sviluppatore del browser può aggirarla). Per
+// questo la password non è salvata in chiaro ma solo come hash SHA-256, un piccolo
+// ostacolo in più rispetto a lasciarla leggibile direttamente nel codice sorgente.
+const PASSWORD_HASH = '3df37e2345e58dba10b458507078da688d9d0fff37c42e2a3b78b3f232272b58';
+
+async function sha256(testo){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(testo));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function verificaPassword(){
+  const input = document.getElementById('password-input').value;
+  const hash = await sha256(input);
+  if(hash === PASSWORD_HASH){
+    sessionStorage.setItem('accesso_ok','1');
+    document.getElementById('password-overlay').style.display='none';
+  } else {
+    document.getElementById('password-errore').style.display='block';
+  }
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  // Se l'accesso è già stato verificato in questa sessione del browser, non richiede
+  // di nuovo la password (evita di doverla reinserire ad ogni ricaricamento pagina).
+  if(sessionStorage.getItem('accesso_ok')==='1'){
+    document.getElementById('password-overlay').style.display='none';
+  }
+  document.getElementById('password-input').addEventListener('keydown', e=>{
+    if(e.key==='Enter') verificaPassword();
+  });
+});
+</script>
+
+
 <div id="archivio-panel">
   <div id="archivio-header">
     <h2>📁 Archivio Schede</h2>
