@@ -262,6 +262,9 @@ document.addEventListener('DOMContentLoaded', ()=>{
         <div class="field"><label>Anno arrivo in Italia</label><input type="text" id="anno_arrivo" style="width:80px"></div>
         <div class="field grow"><label>Comune / Regione primo arrivo</label><input type="text" id="comune_arrivo"></div>
       </div>
+      <div class="row">
+        <div class="field full"><label>Note abitazione</label><input type="text" id="abitazione_note"></div>
+      </div>
     </div>
 
     <div class="section collapsed">
@@ -728,7 +731,7 @@ function raccogliDati(){
   ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita',
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare',
    'istruzione_origine','istruzione_italia',
-   'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
+   'residenza','anno_arrivo','comune_arrivo','abitazione_note','scadenza_permesso','stato_pratica',
    'note_giuridiche','area_altro','servizi_invio_altro','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{const el=document.getElementById(id);if(el)d[id]=el.value||'';});
   for(let i=1;i<=4;i++){
@@ -786,7 +789,7 @@ function caricaDati(d){
   ['data_colloquio','numero_scheda','operatore','cognome','nome','data_nascita','luogo_nascita',
    'nazionalita','lingua','codice_fiscale','codice_stp','nucleo_familiare','n_minori',
    'istruzione_origine','istruzione_italia',
-   'residenza','anno_arrivo','comune_arrivo','scadenza_permesso','stato_pratica',
+   'residenza','anno_arrivo','comune_arrivo','abitazione_note','scadenza_permesso','stato_pratica',
    'note_giuridiche','area_altro','servizi_invio_altro','mediatore_chi','note_libere','data_prossimo'
   ].forEach(id=>{
     const el=document.getElementById(id);
